@@ -52,12 +52,20 @@ new Vue({
 function setNetWorkState () {
   store.commit('setNetworkStatus', navigator.connection.type)
 }
-document.addEventListener('deviceready', function () {
+
+function onDeviceReady () {
   store.commit('setDeviceReady', true)
 
   if (navigator.splashscreen) navigator.splashscreen.hide()
 
-  document.addEventListener('offline', setNetWorkState, false)
-  document.addEventListener('online', setNetWorkState, false)
   setNetWorkState()
-})
+}
+
+document.addEventListener('offline', setNetWorkState, false)
+document.addEventListener('online', setNetWorkState, false)
+
+if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)) {
+  document.addEventListener('deviceready', onDeviceReady, false)
+} else {
+  onDeviceReady()
+}

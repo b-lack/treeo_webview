@@ -64,6 +64,7 @@ export default {
 
   data () {
     return {
+      farmer_id: null,
       volume: 0,
       outputVolume: '0',
       trees: 0,
@@ -83,12 +84,18 @@ export default {
   watch: {
     calculatedValue: function (newValue) {
       let _range = newValue * this.range
-      const valueHigh = Math.round( (newValue + _range) / 1000000 )
-      const valueLow = Math.round( (newValue - _range) / 1000000 )
+      const valueHigh = Math.round((newValue + _range) / 1000000)
+      const valueLow = Math.round((newValue - _range) / 1000000)
       const resultHigh = valueHigh.toString().replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
       const resultLow = valueLow.toString().replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 
+      this.outputCalculatedValueLow = 0
+      this.outputCalculatedValueHigh = 0
+      console.log('reset 1');
+
+
       Vue.nextTick(() => {
+        console.log('tick');
         this.outputCalculatedValueHigh = resultHigh + ' jt'
         this.outputCalculatedValueLow = resultLow + ' jt'
       })
@@ -108,11 +115,11 @@ export default {
     this.init()
   },
   activated: function () {
-    this.farmer_id = AuthService.getProfile().id
     this.init()
   },
   methods: {
     init () {
+      this.farmer_id = AuthService.getProfile().id
       this.rows.splice(0, this.rows.length - 1)
 
       if (!this.parentId) {
@@ -136,15 +143,19 @@ export default {
     },
     getPlots () {
       const that = this
+      let trees = []
+
       this.plotsDb.getAll().then(function (result) {
-        return that.getSurveys(that.createIdArray(result.docs))
+        let plotIds = that.createIdArray(result.docs)
+        return that.getSurveys(plotIds)
       }).then((result) => {
-        return that.getTrees(that.createIdArrayFromArray(result))
+        let surveyId = that.createIdArrayFromArray(result)
+        return that.getTrees(surveyId)
       }).then(result => {
-        let trees = []
         result.forEach((element, index) => {
           trees = [...trees, ...element.docs]
         })
+
         that.volume = that.calVolume(trees)
         that.trees = trees.length
       })
@@ -174,7 +185,7 @@ export default {
 
         height = 1.3 + 31.028 * Math.pow((1 - Math.exp(-0.039 * tree_dbh_cm)), 0.854)
 
-        tree_volume = 2 * Math.PI * Math.pow(((tree_dbh_cm / 100)/2), 2) * height * formfactor
+        tree_volume = 2 * Math.PI * Math.pow(((tree_dbh_cm / 100) / 2), 2) * height * formfactor
         volume += tree_volume
 
         if (tree_dbh_cm < 20) tree_value = 0

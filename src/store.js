@@ -18,7 +18,7 @@ export default new Vuex.Store({
     ongoingPlots: [],
     deviceReady: false,
     synching: false,
-    netWorkStatus: 'wifi',
+    netWorkStatus: 'none',
     update: 0,
     updateToolbar: 0
   },
