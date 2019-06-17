@@ -239,7 +239,9 @@ var SynchService = {
   },
   createDb (databaseName, parents, resolve) {
     const that = this
-    let uploadData, uploadDataSave, database = new PouchDbService(databaseName)
+    let uploadData
+    let uploadDataSave
+    let database = new PouchDbService(databaseName)
 
     return database.getAllIntern().then((result) => {
       uploadData = that.mapData[databaseName + 'Create'](result.docs, parents)
@@ -257,7 +259,6 @@ var SynchService = {
         return that.sendAll(databaseName + 'Create', uploadData)
       }
     }).then((rows) => {
-
       if (!rows || rows.length === 0) {
         if (uploadDataSave.length > 0) {
           alert('synch error: cannot find all (' + uploadDataSave + ') local data')
@@ -270,7 +271,6 @@ var SynchService = {
 
         this.doubleCheckRows(rows)
       }
-
       return database.postAll(rows)
     }).then((postAll) => {
       resolve(uploadDataSave)

@@ -91,11 +91,8 @@ export default {
 
       this.outputCalculatedValueLow = 0
       this.outputCalculatedValueHigh = 0
-      console.log('reset 1');
-
 
       Vue.nextTick(() => {
-        console.log('tick');
         this.outputCalculatedValueHigh = resultHigh + ' jt'
         this.outputCalculatedValueLow = resultLow + ' jt'
       })
