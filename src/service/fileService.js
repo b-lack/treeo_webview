@@ -1,7 +1,9 @@
 class FileService {
-  constructor (successFn, errorFn) {
+  constructor (successFn, errorFn) {console.log('Constructor1');
     let fileSystem
-    errorFn = errorFn || function () {}
+    errorFn = errorFn || function (error) {
+      console.log(error)
+    }
     successFn = successFn || function () {}
 
     if (!window.requestFileSystem) {
@@ -12,8 +14,11 @@ class FileService {
 
     fileSystem = window.requestFileSystem(window.LocalFileSystem.PERSISTENT, 0, (fs) => {
       that.dirEntry = fs.root
+      console.log('Constructor success');
       if (successFn) { successFn(fileSystem) }
     }, errorFn)
+
+    console.log('Constructor');
   }
   setFileSystemRequest () {
     const that = this

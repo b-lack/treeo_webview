@@ -4,9 +4,6 @@ import ApiService from './apiService'
 import store from '../store'
 
 import LocalStorageService from '../service/localstorageService'
-import FileService from '../service/fileService'
-
-const fileService = new FileService()
 
 var SynchService = {
   synch () {
@@ -345,8 +342,8 @@ var SynchService = {
   deleteRows (databaseName, internRows, externRows) {
     const that = this
 
-    return fileService.setFileSystemRequest().then((fs) => {
-      return that.deleteRow(databaseName, internRows, externRows, fileService)
+    return window.fileService.setFileSystemRequest().then((fs) => {
+      return that.deleteRow(databaseName, internRows, externRows, window.fileService)
     })
   },
   deleteOneRow (element, database, resolve, reject) {
@@ -359,14 +356,14 @@ var SynchService = {
       if (element.local_image) {
         // let nativePath = element.local_image.split('/');
         // let fileName = nativePath[nativePath.length-1];
-        if (!fileService) {
+        if (!window.fileService) {
           that.deleteOneRow(element, database, resolve, reject).then(() => {
             resolve()
           }).catch(() => {
             reject(Error('error deletePromise'))
           })
         } else {
-          fileService.deleteFileByUrl(element.local_image).then(() => {
+          window.fileService.deleteFileByUrl(element.local_image).then(() => {
             return that.deleteOneRow(element, database, resolve, reject)
           }).then(() => {
             resolve('')
@@ -385,7 +382,7 @@ var SynchService = {
     internRows.forEach((element) => {
       const filtered = externRows.filter(e => e.id === element.id)
       if (!filtered.length && element.id) {
-        p = this.deletePromise(element, fileService, databaseName)
+        p = this.deletePromise(element, window.fileService, databaseName)
         promises.push(p)
       }
     })
@@ -490,7 +487,8 @@ var SynchService = {
     return new Blob([binary], { type: type })
   },
   async uploadImage (imageList, database, resolve, reject) {
-    await fileService.setFileSystemRequest()
+
+    await window.fileService.setFileSystemRequest()
 
     const that = this
     let upload = imageList.splice(0, 1)
@@ -504,9 +502,9 @@ var SynchService = {
     let nativeImagePth = element.local_image
     let imagePath = element.local_image.split('/')
 
-    fileService.getFile(imagePath[imagePath.length - 1]).then((file) => {
+    window.fileService.getFile(imagePath[imagePath.length - 1]).then((file) => {
       return file.file((file) => {
-        fileService.readFile(file).then((result) => {
+        window.fileService.readFile(file).then((result) => {
           let splittet = result.split(',')
 
           let blob = that.createBlob(splittet[1], file.type)
@@ -515,7 +513,7 @@ var SynchService = {
             delete element.local_image
             return database.post(element)
           }).then(() => {
-            return fileService.deleteFileByUrl(nativeImagePth)
+            return window.fileService.deleteFileByUrl(nativeImagePth)
           }).then(() => {
             that.uploadImage(imageList, database, resolve, reject)
           }).catch((error) => {

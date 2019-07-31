@@ -8,6 +8,7 @@ import i18n from './i18n'
 import HelperService from './service/helperService'
 
 import FileService from './service/fileService'
+window.fileService
 
 import AiService from './service/aiService'
 
@@ -20,7 +21,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 Vue.prototype.$Helper = HelperService
 
 Vue.use(require('vue-moment'))
-Vue.prototype.$file = new FileService()
+
 Vue.prototype.$ai = new AiService()
 Vue.prototype.$maskToDia = new MasksToDiameterService()
 window.config = configLive
@@ -53,8 +54,10 @@ function setNetWorkState () {
   store.commit('setNetworkStatus', navigator.connection.type)
 }
 
-function onDeviceReady () {
+function onDeviceReady (fileService) {
   store.commit('setDeviceReady', true)
+
+  window.fileService = Vue.prototype.$file = new FileService()
 
   if (navigator.splashscreen) navigator.splashscreen.hide()
 
@@ -65,7 +68,7 @@ document.addEventListener('offline', setNetWorkState, false)
 document.addEventListener('online', setNetWorkState, false)
 
 if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)) {
-  document.addEventListener('deviceready', onDeviceReady, false)
+  document.addEventListener('deviceready', function(){onDeviceReady(window.fileService)}, false)
 } else {
   onDeviceReady()
 }

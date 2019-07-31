@@ -28,9 +28,6 @@
 </template>
 
 <script>
-import FileService from '../service/fileService'
-
-const fileService = new FileService()
 
 export default {
   data: () => ({
@@ -42,20 +39,20 @@ export default {
   methods: {
     readFiles () {
       let that = this
-      fileService.getAllFiles().then((result) => {
+      this.$file.getAllFiles().then((result) => {
         that.fileList.splice(0, that.fileList.length)
         that.fileList.push(...result)
       })
     },
     deleteFile (url) {
       let that = this
-      fileService.deleteFileByUrl(url).then((result) => {
+      this.$file.deleteFileByUrl(url).then((result) => {
         that.readFiles()
       })
     },
     deleteAll () {
       let that = this
-      fileService.deleteAllFiles().then((result) => {
+      this.$file.deleteAllFiles().then((result) => {
         that.readFiles()
       })
     }
