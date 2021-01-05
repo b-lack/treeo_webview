@@ -24,7 +24,7 @@
     "url": "https://gruenecho.de"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "maskstodiameterservice": "git+https://github.com/Johannes0Horn/masksToDiameterService.git",
     "moment": "^2.24.0",
     "ol": "^5.3.1",
